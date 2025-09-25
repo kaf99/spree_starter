@@ -11,6 +11,9 @@ gem "pg", "~> 1.6"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 
+#Razorpay
+gem 'spree_razorpay', git: 'https://github.com/kaf99/spree_razorpay.git'
+
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
 gem "importmap-rails"
 
