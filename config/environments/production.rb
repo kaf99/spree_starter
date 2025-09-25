@@ -47,15 +47,14 @@ Rails.application.configure do
   config.active_support.report_deprecations = false
 
   # Replace the default in-process memory cache store with a durable alternative.
-  # https://guides.rubyonrails.org/caching_with_rails.html#activesupport-cache-rediscachestore
   if ENV['REDIS_CACHE_URL'].present?
-    cache_servers = ENV['REDIS_CACHE_URL'].split(',') # if multiple instances are provided
+    cache_servers = ENV['REDIS_CACHE_URL'].split(',')
     config.cache_store = :redis_cache_store, {
       url: cache_servers,
-      connect_timeout:    30,  # Defaults to 1 second
-      read_timeout:       0.2, # Defaults to 1 second
-      write_timeout:      0.2, # Defaults to 1 second
-      reconnect_attempts: 2,   # Defaults to 1
+      connect_timeout:    30,
+      read_timeout:       0.2,
+      write_timeout:      0.2,
+      reconnect_attempts: 2,
     }
   else
     config.cache_store = :memory_store
@@ -65,18 +64,19 @@ Rails.application.configure do
   config.active_job.queue_adapter = :sidekiq
 
   # Ignore bad email addresses and do not raise email delivery errors.
-  # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false
 
-  # Set host to be used by links generated in mailer templates.
-  # config.action_mailer.default_url_options = { host: "example.com" }
+  # ✅ Default URL options (fixes localhost links!)
+  host = ENV.fetch("HOST", "localhost")
+  config.action_controller.default_url_options = { host: host, protocol: "https" }
+  config.action_mailer.default_url_options = { host: host, protocol: "https" }
 
-  # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
+  # SMTP example if SENDGRID is enabled
   if ENV['SENDGRID_API_KEY'].present?
     config.action_mailer.smtp_settings = {
-      user_name: 'apikey', # This is the string literal 'apikey', NOT the ID of your API key
-      password: ENV['SENDGRID_API_KEY'], # This is the secret sendgrid API key which was issued during API key creation
-      domain: ENV.fetch('SENDGRID_DOMAIN', Rails.application.routes.default_url_options[:host]),
+      user_name: 'apikey',
+      password: ENV['SENDGRID_API_KEY'],
+      domain: ENV.fetch('SENDGRID_DOMAIN', host),
       address: 'smtp.sendgrid.net',
       port: 587,
       authentication: :plain,
@@ -84,8 +84,7 @@ Rails.application.configure do
     }
   end
 
-  # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
-  # the I18n.default_locale when a translation cannot be found).
+  # Enable locale fallbacks for I18n
   config.i18n.fallbacks = true
 
   # Do not dump schema after migrations.
@@ -95,11 +94,6 @@ Rails.application.configure do
   config.active_record.attributes_for_inspect = [ :id ]
 
   # Enable DNS rebinding protection and other `Host` header attacks.
-  # config.hosts = [
-  #   "example.com",     # Allow requests from example.com
-  #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
-  # ]
-  #
-  # Skip DNS rebinding protection for the default health check endpoint.
+  # config.hosts = [ "example.com", /.*\.example\.com/ ]
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 end
