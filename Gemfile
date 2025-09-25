@@ -7,7 +7,6 @@ gem "pg", "~> 1.6"
 gem "puma", ">= 5.0"
 
 # Payment Integrations
-gem 'spree_razorpay', git: 'https://github.com/kaf99/spree_razorpay.git', branch: 'main'
 gem "spree_stripe"
 gem "spree_paypal_checkout", "~> 0.5"
 
@@ -49,7 +48,7 @@ gem "spree_google_analytics", "~> 1.0"
 gem "spree_klaviyo", "~> 1.0"
 
 # Spree Extensions
-gem 'spree_product_reviews', git: 'https://github.com/kaf99/spree_product_reviews.git', branch: 'main'
+
 
 # Development & Test
 group :development, :test do
